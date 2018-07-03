@@ -1,11 +1,23 @@
 from bottle import run, route, redirect, request
 #import RPi.GPIO as GPIO
 import time
+import threading
+
+loop_thread = None
 
 pump_pin = 23
 initial_value_duty = 42
 initial_freq = 5
 
+button_status = False
+old_button_status = False
+slider_status = 0
+old_slider_status = 0
+input_status = 0
+old_input_status = 0
+
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(pump_pin, GPIO.OUT)
 #GPIO.setmode(GPIO.BCM)
 #GPIO.setup(pump_pin, GPIO.OUT)
 
@@ -170,7 +182,7 @@ def index():
 	</html>
 
 
-    ''' 
+    '''
 
 @route("/pumpon", method="PUT")
 def pumpon():
@@ -184,18 +196,24 @@ def pumpoff():
 
 @route("/duty", method="PUT")
 def set_duty():
-	print request.query.duty
+    print request.query.duty
 
 @route("/number", method="PUT")
 def set_duty():
-	print request.query.number
+    print request.query.number
 
-@route("/test", method="GET")
-def test():
-	print "test"
-	return redirect("/")
+def main_loop():
+	while True:
+		time.sleep(1)
+		print "neki"
+
 
 if __name__=="__main__":
+	global loop_thread
+	loop_thread = threading.Thread(target=main_loop)
+	loop_thread .daemon = True
+	loop_thread.start()
+
 	run(host='0.0.0.0', port=8080, debug=True)
 
 	# try:
