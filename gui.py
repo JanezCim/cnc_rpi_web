@@ -289,8 +289,10 @@ def main_loop():
 		if(pump_on_off != old_pump_on_off):
 			if(pump_on_off == True):
 				print "ON"
+				GPIO.output(pump_pin, 1)
 			else:
 				print "OFF"
+				GPIO.output(pump_pin, 0)
 
 		old_button_status = button_status
 		old_duty_freq = duty_freq
