@@ -38,6 +38,10 @@ def index():
 		<input type="number" name="quantity" min="1" max="5" value="'''+str(initial_freq)+'''" id="number1">
 	</div>
 
+	<div id="shutdown_btn" onclick="shutdownFcn()">
+		SHUTDOWN
+	</div>
+
 	<script type="text/javascript">
 
 		xmlHttp=new XMLHttpRequest();
@@ -104,6 +108,16 @@ def index():
 		}
 
 
+		function shutdownFcn(){
+			if(xmlHttp.readyState==0 || xmlHttp.readyState==4){
+				xmlHttp.open('PUT','/shutdown',true);
+				xmlHttp.onreadystatechange=handleServerResponse;
+				xmlHttp.send(null);	
+				console.log("req sent");			
+			}
+		}
+
+
 	</script>
 	<style>
 	html {
@@ -123,6 +137,7 @@ def index():
 		 text-align:center;
 		 
 		 margin: 25px;
+		 border-radius: 8px;
 	}
 	.slidecontainer {
 	    width: 75%;
@@ -165,6 +180,17 @@ def index():
 		margin:auto;
 		padding-left:49%;
 	}
+
+
+	#shutdown_btn {
+		background: #FF1111;
+		padding: 10px;
+		margin: 20px;
+		width: 10em;
+		text-align: center;
+		border-radius: 8px;
+	}
+
 	</style>
 
 	</html>
@@ -189,6 +215,11 @@ def set_duty():
 @route("/number", method="PUT")
 def set_duty():
 	print request.query.number
+
+
+@route("/shutdown", method="PUT")
+def shutdownFcn():
+	print "shutdown request received"
 
 @route("/test", method="GET")
 def test():
