@@ -2,7 +2,7 @@ from bottle import run, route, redirect, request
 import time
 import threading
 
-running_on_rpi = True
+running_on_rpi = False
 
 if running_on_rpi:
 	import RPi.GPIO as GPIO
@@ -19,6 +19,11 @@ old_phy_btn_status = [0]*len(button_pins)
 
 initial_value_duty = 42
 initial_freq = 5
+
+red = "#FF1111"
+green = "#1fe50d"
+shutdown_btn_clr = red
+
 
 button_status = False
 old_button_status = False
@@ -209,7 +214,7 @@ def index():
 
 
 	#shutdown_btn {
-		background: #FF1111;
+		background: '''+shutdown_btn_clr+''';
 		padding: 10px;
 		margin: 20px;
 		width: 10em;
@@ -250,7 +255,14 @@ def set_duty_freq():
 
 @route("/shutdown", method="PUT")
 def shutdownFcn():
-	print "shutdown request received"
+	global shutdown_btn_clr
+	if shutdown_btn_clr == red:
+		shutdown_btn_clr = green
+
+	else:
+		print "Shutdown"
+
+	return redirect("/")
 	
 
 def main_loop():
@@ -319,10 +331,12 @@ def main_loop():
 		if(pump_on_off != old_pump_on_off):
 			if(pump_on_off == True):
 				print "ON"
-				GPIO.output(pump_pin, 1)
+				if running_on_rpi:
+					GPIO.output(pump_pin, 1)
 			else:
 				print "OFF"
-				GPIO.output(pump_pin, 0)
+				if running_on_rpi:
+					GPIO.output(pump_pin, 0)
 
 		old_button_status = button_status
 		old_duty_freq = duty_freq
@@ -337,17 +351,23 @@ def read_phy_buttons():
 	#go thru all the physical buttons and check if they are pressed
 	global phy_btn_status
 	global old_phy_btn_status
-	for i in range (0,len(button_pins)):
-		if GPIO.input(button_pins[i]) == GPIO.LOW:
-			phy_btn_status[i]=True
-		else:
+	#if running on rpi, check GPIOs for button statuses
+	if running_on_rpi:
+		for i in range (0,len(button_pins)):
+			if GPIO.input(button_pins[i]) == GPIO.LOW:
+				phy_btn_status[i]=True
+			else:
+				phy_btn_status[i]=False
+	#if not running on rpi, set all physical buttons to false
+	else:
+		for i in range (0,len(button_pins)):
 			phy_btn_status[i]=False
 
 def remember_phy_button_states():
 	#go thru all button statuses and remember them for the next loop
 	for i in range(0,len(button_pins)):
 		old_phy_btn_status[i]=phy_btn_status[i]
->>>>>>> 9bd911694f100a2953fb76d0c8558a3731de4d04
+
 
 if __name__=="__main__":
 	global loop_thread
