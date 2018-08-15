@@ -64,6 +64,10 @@ def index():
 		<input type="number" name="quantity" min="1" max="5" value="'''+str(initial_freq)+'''" id="number1">
 	</div>
 
+	<div id="shutdown_btn" onclick="shutdownFcn()">
+		SHUTDOWN
+	</div>
+
 	<script type="text/javascript">
 
 		xmlHttp=new XMLHttpRequest();
@@ -130,6 +134,16 @@ def index():
 		}
 
 
+		function shutdownFcn(){
+			if(xmlHttp.readyState==0 || xmlHttp.readyState==4){
+				xmlHttp.open('PUT','/shutdown',true);
+				xmlHttp.onreadystatechange=handleServerResponse;
+				xmlHttp.send(null);	
+				console.log("req sent");			
+			}
+		}
+
+
 	</script>
 	<style>
 	html {
@@ -149,6 +163,7 @@ def index():
 		 text-align:center;
 		 
 		 margin: 25px;
+		 border-radius: 8px;
 	}
 	.slidecontainer {
 	    width: 75%;
@@ -191,6 +206,17 @@ def index():
 		margin:auto;
 		padding-left:49%;
 	}
+
+
+	#shutdown_btn {
+		background: #FF1111;
+		padding: 10px;
+		margin: 20px;
+		width: 10em;
+		text-align: center;
+		border-radius: 8px;
+	}
+
 	</style>
 
 	</html>
@@ -221,6 +247,10 @@ def set_duty():
 def set_duty_freq():
 	global duty_freq
 	duty_freq = request.query.number
+
+@route("/shutdown", method="PUT")
+def shutdownFcn():
+	print "shutdown request received"
 	
 
 def main_loop():
@@ -317,6 +347,7 @@ def remember_phy_button_states():
 	#go thru all button statuses and remember them for the next loop
 	for i in range(0,len(button_pins)):
 		old_phy_btn_status[i]=phy_btn_status[i]
+>>>>>>> 9bd911694f100a2953fb76d0c8558a3731de4d04
 
 if __name__=="__main__":
 	global loop_thread
