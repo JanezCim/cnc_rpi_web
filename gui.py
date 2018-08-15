@@ -302,6 +302,7 @@ def main_loop():
 		remember_phy_button_states()
 		time.sleep(0.05)
 
+#read physical buttons
 def read_phy_buttons():
 	#go thru all the physical buttons and check if they are pressed
 	global phy_btn_status
