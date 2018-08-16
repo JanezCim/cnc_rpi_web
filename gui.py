@@ -110,7 +110,8 @@ def index():
 
 		var slider = document.getElementById("slider1");
 		var output = document.getElementById("slider_val");
-		var number = document.getElementById("number1")
+		var number = document.getElementById("number1");
+		var shutdownbtn = document.getElementById("shutdown_btn");
 		//output.innerHTML = slider.value; // Display the default slider value
 
 		// Update the current slider value (each time you drag the slider handle)
@@ -137,12 +138,20 @@ def index():
 				console.log("req sent");			
 			}
 		}
-
+		function handleShutdown(){
+			if(xmlHttp.readyState==4 && xmlHttp.status==200){
+				//console.log("resp received")
+				
+				console.log("resp: "+xmlHttp.response)
+				shutdownbtn.style.backgroundColor = xmlHttp.response
+				
+			}
+		}
 
 		function shutdownFcn(){
 			if(xmlHttp.readyState==0 || xmlHttp.readyState==4){
 				xmlHttp.open('PUT','/shutdown',true);
-				xmlHttp.onreadystatechange=handleServerResponse;
+				xmlHttp.onreadystatechange=handleShutdown;
 				xmlHttp.send(null);	
 				console.log("req sent");			
 			}
@@ -258,11 +267,16 @@ def shutdownFcn():
 	global shutdown_btn_clr
 	if shutdown_btn_clr == red:
 		shutdown_btn_clr = green
-
 	else:
 		print "Shutdown"
+		shutdown_btn_clr = "#777"
+	XML=""
+	#XML*="<?xml version='1.0'?>";
+	#XML+="<response>";
+	XML+=shutdown_btn_clr;
+	#XML+="</response>";
 
-	return redirect("/")
+	return XML
 	
 
 def main_loop():
