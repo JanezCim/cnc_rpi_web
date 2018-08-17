@@ -4,7 +4,7 @@ import threading
 from subprocess import call
 
 
-running_on_rpi = False
+running_on_rpi = True
 
 if running_on_rpi:
 	import RPi.GPIO as GPIO
@@ -48,7 +48,6 @@ if running_on_rpi:
 	GPIO.setup(pump_pin, GPIO.OUT)
 	for btn in button_pins:
 		GPIO.setup(btn, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
 
 @route("/")
 def index():
@@ -240,7 +239,6 @@ def index():
 
     '''
 
-
 @route("/pumpon", method="PUT")
 def pumpon():
 	global button_status
@@ -280,7 +278,6 @@ def shutdownFcn():
 	#XML+="</response>";
 
 	return XML
-	
 
 def main_loop():
 	global old_button_status
@@ -316,7 +313,7 @@ def main_loop():
 			#everytime button is pressed turn pumping off
 			pump_with_freq = False
 
-		#if there is a change eather in slider status or duty frequency number, start periodic pumping and caluclate times of intervals	
+		#if there is a change eather in slider status or duty frequency number, start periodic pumping and caluclate times of intervals
 		if((slider_status != old_slider_status) or (duty_freq != old_duty_freq)):
 			#everytime there is a change on slider var, turn pumping on
 			pump_with_freq = True
@@ -328,7 +325,7 @@ def main_loop():
 				print "There was an error calculating on off pump times"
 		
 		#if this is the first cycle of pumping, start timer freshly 	
-		if(old_pump_with_freq==False and pump_with_freq ==True):
+		if(old_pump_with_freq == False and pump_with_freq == True):
 			start_time = time.time()
 
 		#if flag for periodic pumping is activated, we pump!	
@@ -372,19 +369,18 @@ def read_phy_buttons():
 	if running_on_rpi:
 		for i in range (0,len(button_pins)):
 			if GPIO.input(button_pins[i]) == GPIO.LOW:
-				phy_btn_status[i]=True
+				phy_btn_status[i] = True
 			else:
-				phy_btn_status[i]=False
+				phy_btn_status[i] = False
 	#if not running on rpi, set all physical buttons to false
 	else:
 		for i in range (0,len(button_pins)):
-			phy_btn_status[i]=False
+			phy_btn_status[i] = False
 
 def remember_phy_button_states():
 	#go thru all button statuses and remember them for the next loop
 	for i in range(0,len(button_pins)):
-		old_phy_btn_status[i]=phy_btn_status[i]
-
+		old_phy_btn_status[i] = phy_btn_status[i]
 
 if __name__=="__main__":
 	global loop_thread
