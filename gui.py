@@ -1,6 +1,8 @@
 from bottle import run, route, redirect, request
 import time
 import threading
+from subprocess import call
+
 
 running_on_rpi = False
 
@@ -269,6 +271,7 @@ def shutdownFcn():
 		shutdown_btn_clr = green
 	else:
 		print "Shutdown"
+		call("sudo shutdown -h now", shell=True)
 		shutdown_btn_clr = "#777"
 	XML=""
 	#XML*="<?xml version='1.0'?>";
